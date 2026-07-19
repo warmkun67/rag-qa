@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 import streamlit as st
+
+# === set_page_config 必须是第一条 Streamlit 命令 ===
+st.set_page_config(
+    page_title="RAG 智能问答系统",
+    page_icon="🔒",
+    layout="wide"
+)
+
 import os
 from dotenv import load_dotenv
 
@@ -8,6 +16,7 @@ import config
 
 # ====================== 密码验证 ======================
 def get_password():
+    """Streamlit Secrets 优先，环境变量兜底"""
     try:
         return st.secrets.get("APP_PASSWORD", os.getenv("APP_PASSWORD", ""))
     except Exception:
@@ -18,48 +27,96 @@ APP_PASSWORD = get_password()
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
-st.set_page_config(
-    page_title="RAG 智能问答系统",
-    page_icon="🔓" if st.session_state.authenticated else "🔒",
-    layout="wide"
-)
-
 # --- 登录页 ---
 if not st.session_state.authenticated:
     st.markdown("""
     <style>
-        [data-testid="stAppViewContainer"] {
-            background: linear-gradient(160deg, #f5f3f0 0%, #e8e6e1 100%);
+        [data-testid="stAppViewContainer"] > .main {
+            background: linear-gradient(160deg, #f0ede8 0%, #e3dfd8 50%, #ece8e2 100%);
+            position: relative;
+            overflow: hidden;
         }
-        .login-card {
+        /* 装饰光斑 */
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-orb.orb-1 {
+            width: 320px; height: 320px;
+            background: radial-gradient(circle, rgba(79,70,229,0.15) 0%, transparent 70%);
+            top: -80px; right: -60px;
+        }
+        .bg-orb.orb-2 {
+            width: 260px; height: 260px;
+            background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+            bottom: -60px; left: -40px;
+        }
+        .bg-orb.orb-3 {
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(245,158,11,0.10) 0%, transparent 70%);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        [data-testid="stSidebar"] { display: none; }
+        .login-card-full {
             max-width: 400px;
-            margin: 120px auto 0 auto;
-            background: white;
-            padding: 48px 40px;
+            margin: 100px auto 0 auto;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 48px 40px 36px 40px;
             border-radius: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 30px rgba(0,0,0,0.04);
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 16px 40px rgba(0,0,0,0.06);
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
-        .login-card .icon { font-size: 48px; margin-bottom: 8px; }
-        .login-card h2 { font-size: 22px; font-weight: 600; color: #1e1b4b; margin: 0 0 6px 0; }
-        .login-card .sub { font-size: 14px; color: #8b8a91; margin-bottom: 28px; }
+        .login-card-full .icon-wrap {
+            display: inline-flex;
+            align-items: center; justify-content: center;
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(79,70,229,0.08) 0%, rgba(124,58,237,0.06) 100%);
+            margin-bottom: 16px;
+            box-shadow: 0 0 0 8px rgba(79,70,229,0.04);
+        }
+        .login-card-full .icon-wrap .icon { font-size: 32px; }
+        .login-card-full h2 { font-size: 22px; font-weight: 600; color: #1e1b4b; margin: 0 0 8px 0; }
+        .login-card-full .divider {
+            width: 32px; height: 3px;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            border-radius: 2px;
+            margin: 0 auto 24px auto;
+            opacity: 0.5;
+        }
     </style>
-    <div class="login-card">
-        <div class="icon">🔐</div>
-        <h2>知识库问答系统</h2>
-        <p class="sub">请输入访问密码</p>
-    </div>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
     """, unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([0.28, 0.44, 0.28])
     with col2:
-        pwd = st.text_input("密码", type="password", placeholder="请输入密码...", label_visibility="collapsed")
-        if st.button("验证身份", use_container_width=True):
+        st.markdown("""
+        <div class="login-card-full">
+            <div class="icon-wrap"><span class="icon">🔐</span></div>
+            <h2>知识库问答系统</h2>
+            <div class="divider"></div>
+        </div>
+        """, unsafe_allow_html=True)
+        pwd = st.text_input("密码", type="password", placeholder="请输入访问密码...", label_visibility="collapsed")
+        if st.button("🔐 验证身份", use_container_width=True):
             if pwd == APP_PASSWORD:
                 st.session_state.authenticated = True
                 st.rerun()
             else:
-                st.error("密码错误")
+                st.error("密码错误，请重试")
+        st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
 # ====================== 全局样式 ======================
@@ -77,43 +134,18 @@ st.markdown("""
     [data-testid="stHeader"] { display: none; }
     [data-testid="stToolbar"] { display: none; }
 
-    /* === 主背景 === */
+    /* === 主背景 + 纹理 === */
     [data-testid="stAppViewContainer"] > .main {
-        background: #fafaf8;
-    }
-
-    /* === 页眉 === */
-    .app-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 18px 32px;
-        margin-bottom: 8px;
-    }
-    .app-header .brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    .app-header .brand .logo {
-        width: 38px; height: 38px;
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 20px;
-    }
-    .app-header .brand h1 {
-        font-size: 18px; font-weight: 600; color: #1e1b4b; margin: 0;
-    }
-    .app-header .badge {
-        font-size: 11px; color: #8b8a91;
-        background: #f1f0ec; padding: 4px 12px; border-radius: 20px;
+        background-color: #fafaf8;
+        background-image:
+            radial-gradient(circle, #e8e6e1 1px, transparent 1px);
+        background-size: 24px 24px;
     }
 
     /* === 侧边栏 === */
     [data-testid="stSidebar"] {
-        background: white;
-        border-right: 1px solid #f0efe9;
+        background: #f7f6f3;
+        border-right: 1px solid #edece7;
     }
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h4 {
         font-size: 12px !important;
@@ -147,7 +179,7 @@ st.markdown("""
 
     /* === 文档卡片 === */
     .doc-card {
-        background: #fafaf8;
+        background: white;
         padding: 10px 14px;
         border-radius: 10px;
         margin: 4px 0;
@@ -156,23 +188,29 @@ st.markdown("""
         display: flex;
         align-items: center;
         gap: 8px;
-        border: 1px solid transparent;
-        transition: all 0.15s;
+        border: 1px solid #edece7;
+        transition: all 0.2s;
     }
     .doc-card:hover {
-        background: white;
-        border-color: #e5e3de;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        border-color: #d4d1c8;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transform: translateX(2px);
     }
     .doc-card .file-icon { font-size: 16px; flex-shrink: 0; }
 
     /* === 统计卡片 === */
     .stat-card {
-        background: #fafaf8;
+        background: white;
         border-radius: 12px;
         padding: 14px 12px;
         text-align: center;
-        border: 1px solid #f0efe9;
+        border: 1px solid #edece7;
+        transition: all 0.2s;
+        cursor: default;
+    }
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
     .stat-card .stat-num {
         font-size: 22px; font-weight: 700; color: #4f46e5; line-height: 1.2;
@@ -191,29 +229,54 @@ st.markdown("""
     [data-testid="stChatMessage"] {
         border-radius: 16px !important;
         padding: 14px 20px !important;
-        margin: 6px 0 !important;
+        margin: 8px 0 !important;
     }
     [data-testid="stChatMessage"][data-testid="stChatMessage"] {
         background: white !important;
         box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         border: 1px solid #f0efe9;
     }
+    /* 用户消息：左侧靛蓝色条 */
+    [data-testid="stChatMessage"][data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatar"]):not(:has([aria-label="assistant"])) {
+        border-left: 3px solid #4f46e5 !important;
+    }
+    /* 用户消息靠右，AI消息靠左（通过 container 属性） */
+    /* Streamlit 通过 flex-direction 控制左右，这里用 CSS 增强 */
+    .stChatMessage [data-testid="stChatMessageAvatar"] {
+        font-size: 20px;
+    }
 
     /* === 空状态 === */
-    .empty-state {
+    .welcome-card {
         text-align: center;
-        padding: 80px 20px;
-    }
-    .empty-state .empty-icon {
-        width: 64px; height: 64px;
-        margin: 0 auto 20px auto;
-        background: #f0efee;
+        padding: 40px 32px;
+        margin: 40px 0;
+        background: white;
         border-radius: 20px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 28px;
+        border: 1px solid #edece7;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03), 0 8px 24px rgba(0,0,0,0.04);
     }
-    .empty-state h3 { font-size: 18px; font-weight: 600; color: #1e1b4b; margin: 0 0 6px 0; }
-    .empty-state p { font-size: 14px; color: #8b8a91; margin: 0; }
+    .welcome-card .welcome-icon {
+        width: 72px; height: 72px;
+        margin: 0 auto 20px auto;
+        background: linear-gradient(135deg, rgba(79,70,229,0.08) 0%, rgba(124,58,237,0.06) 100%);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 32px;
+        box-shadow: 0 0 0 8px rgba(79,70,229,0.04);
+    }
+    .welcome-card h3 { font-size: 20px; font-weight: 600; color: #1e1b4b; margin: 0 0 8px 0; }
+    .welcome-card .welcome-desc { font-size: 14px; color: #8b8a91; margin: 0 0 24px 0; line-height: 1.6; }
+    .welcome-card .feature-tags {
+        display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    }
+    .welcome-card .feature-tag {
+        font-size: 12px; color: #6d6a81;
+        background: #f7f6f3;
+        border: 1px solid #edece7;
+        padding: 6px 14px; border-radius: 20px;
+        display: inline-flex; align-items: center; gap: 5px;
+    }
 
     /* === 输入框 === */
     [data-testid="stChatInput"] textarea {
@@ -221,11 +284,12 @@ st.markdown("""
         border: 2px solid #e5e3de !important;
         padding: 12px 16px !important;
         font-size: 14px !important;
-        transition: border-color 0.15s;
+        transition: all 0.2s;
+        background: white !important;
     }
     [data-testid="stChatInput"] textarea:focus {
         border-color: #4f46e5 !important;
-        box-shadow: 0 0 0 3px rgba(79,70,229,0.08) !important;
+        box-shadow: 0 0 0 4px rgba(79,70,229,0.10), 0 2px 12px rgba(79,70,229,0.08) !important;
     }
 
     /* === 展开区 === */
@@ -249,8 +313,9 @@ st.markdown("""
     /* === 上传区 === */
     [data-testid="stFileUploader"] {
         border-radius: 12px !important;
-        border: 2px dashed #e5e3de !important;
-        background: #fafaf8 !important;
+        border: 2px dashed #d4d1c8 !important;
+        background: white !important;
+        transition: all 0.2s;
     }
     [data-testid="stFileUploader"]:hover {
         border-color: #4f46e5 !important;
@@ -258,6 +323,17 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+# ====================== 缓存与状态初始化 ======================
+@st.cache_resource
+def get_rag_chain():
+    from rag_chain import build_rag_chain
+    return build_rag_chain()
+
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+if "last_uploaded" not in st.session_state:
+    st.session_state.last_uploaded = None
 
 # ====================== 侧边栏 ======================
 with st.sidebar:
@@ -334,34 +410,29 @@ with st.sidebar:
         st.session_state.chat_history = []
         st.rerun()
 
-# ====================== 缓存 ======================
-@st.cache_resource(show_spinner="📄 正在加载文档...")
-def get_rag_chain():
-    from rag_chain import build_rag_chain
-    return build_rag_chain()
-
-rag = get_rag_chain()
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-if "last_uploaded" not in st.session_state:
-    st.session_state.last_uploaded = None
-
 # ====================== 主聊天区 ======================
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 
 # --- 空状态 ---
 if len(st.session_state.chat_history) == 0:
     st.markdown("""
-    <div class="empty-state">
-        <div class="empty-icon">💡</div>
-        <h3>准备开始</h3>
-        <p>在左侧上传知识文档，然后输入你的问题</p>
+    <div class="welcome-card">
+        <div class="welcome-icon">✨</div>
+        <h3>欢迎使用知识库问答</h3>
+        <p class="welcome-desc">上传文档到左侧知识库，然后用自然语言提问<br>AI 将基于你的文档内容精准回答</p>
+        <div class="feature-tags">
+            <span class="feature-tag">📕 PDF</span>
+            <span class="feature-tag">📘 Word</span>
+            <span class="feature-tag">📊 Excel</span>
+            <span class="feature-tag">📝 Markdown</span>
+            <span class="feature-tag">📄 TXT/CSV</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 # --- 对话历史 ---
 for msg in st.session_state.chat_history:
-    avatar = "🧑" if msg["role"] == "user" else "🤖"
+    avatar = "⭐" if msg["role"] == "user" else "🤖"
     with st.chat_message(msg["role"], avatar=avatar):
         st.write(msg["content"])
         if msg["role"] == "assistant":
@@ -370,12 +441,13 @@ for msg in st.session_state.chat_history:
 
 # --- 输入 ---
 if user_question := st.chat_input("输入问题，按回车发送..."):
-    with st.chat_message("user", avatar="🧑"):
+    with st.chat_message("user", avatar="⭐"):
         st.write(user_question)
     st.session_state.chat_history.append({"role": "user", "content": user_question})
 
     with st.chat_message("assistant", avatar="🤖"):
-        with st.spinner("正在分析文档..."):
+        rag = get_rag_chain()  # 首次加载文档（秒级），后续走缓存
+        with st.spinner("🤔 正在分析文档..."):
             answer = rag(user_question)
             st.write(answer)
             with st.expander("📋 复制答案"):
