@@ -31,9 +31,16 @@ if "authenticated" not in st.session_state:
 if not st.session_state.authenticated:
     st.markdown("""
     <style>
-        [data-testid="stAppViewContainer"] > .main {
+        /* 全屏登录遮罩——覆盖整个页面包括侧边栏 */
+        .login-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9999;
             background: linear-gradient(160deg, #f0ede8 0%, #e3dfd8 50%, #ece8e2 100%);
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
         }
         /* 装饰光斑 */
@@ -61,10 +68,8 @@ if not st.session_state.authenticated:
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
         }
-        [data-testid="stSidebar"] { display: none; }
         .login-card-full {
-            max-width: 400px;
-            margin: 100px auto 0 auto;
+            width: 400px;
             background: rgba(255,255,255,0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -95,9 +100,10 @@ if not st.session_state.authenticated:
             opacity: 0.5;
         }
     </style>
-    <div class="bg-orb orb-1"></div>
-    <div class="bg-orb orb-2"></div>
-    <div class="bg-orb orb-3"></div>
+    <div class="login-overlay">
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+        <div class="bg-orb orb-3"></div>
     """, unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([0.28, 0.44, 0.28])
@@ -107,7 +113,6 @@ if not st.session_state.authenticated:
             <div class="icon-wrap"><span class="icon">🔐</span></div>
             <h2>知识库问答系统</h2>
             <div class="divider"></div>
-        </div>
         """, unsafe_allow_html=True)
         pwd = st.text_input("密码", type="password", placeholder="请输入访问密码...", label_visibility="collapsed")
         if st.button("🔐 验证身份", use_container_width=True):
@@ -116,7 +121,8 @@ if not st.session_state.authenticated:
                 st.rerun()
             else:
                 st.error("密码错误，请重试")
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)  <!-- 闭合 login-card-full -->
+    st.markdown('</div>', unsafe_allow_html=True)      <!-- 闭合 login-overlay -->
     st.stop()
 
 # ====================== 全局样式 ======================
@@ -144,7 +150,6 @@ st.markdown("""
 
     /* === 侧边栏 === */
     [data-testid="stSidebar"] {
-        display: flex !important;
         background: #f7f6f3;
         border-right: 1px solid #edece7;
     }
