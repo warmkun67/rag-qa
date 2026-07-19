@@ -32,10 +32,12 @@ if not st.session_state.authenticated:
     st.markdown("""
     <style>
         [data-testid="stAppViewContainer"] > .main {
-            background: linear-gradient(160deg, #f0ede8 0%, #e3dfd8 50%, #ece8e2 100%);
+            background: linear-gradient(160deg, #e5ecf4 0%, #d9e2ed 50%, #e0e8f2 100%);
+            position: relative;
+            overflow: hidden;
         }
         .bg-orb {
-            position: fixed;
+            position: absolute;
             border-radius: 50%;
             filter: blur(80px);
             opacity: 0.5;
@@ -44,17 +46,17 @@ if not st.session_state.authenticated:
         }
         .bg-orb.orb-1 {
             width: 320px; height: 320px;
-            background: radial-gradient(circle, rgba(79,70,229,0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
             top: -80px; right: -60px;
         }
         .bg-orb.orb-2 {
             width: 260px; height: 260px;
-            background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(79,70,229,0.10) 0%, transparent 70%);
             bottom: -60px; left: -40px;
         }
         .bg-orb.orb-3 {
             width: 200px; height: 200px;
-            background: radial-gradient(circle, rgba(245,158,11,0.10) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
         }
@@ -82,7 +84,7 @@ if not st.session_state.authenticated:
             box-shadow: 0 0 0 8px rgba(79,70,229,0.04);
         }
         .login-card .icon-wrap .icon { font-size: 32px; }
-        .login-card h2 { font-size: 22px; font-weight: 600; color: #1e1b4b; margin: 0 0 8px 0; }
+        .login-card h2 { font-size: 22px; font-weight: 600; color: #1a2540; margin: 0 0 8px 0; }
         .login-card .divider {
             width: 32px; height: 3px;
             background: linear-gradient(90deg, #4f46e5, #7c3aed);
@@ -123,7 +125,7 @@ st.markdown("""
     html, body, [class*="css"] {
         font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
     }
-    body { color: #334155; }
+    body { color: #2a3d52; }
 
     /* 隐藏默认顶栏 */
     [data-testid="stHeader"] { display: none; }
@@ -131,23 +133,23 @@ st.markdown("""
 
     /* === 主背景 + 纹理 === */
     [data-testid="stAppViewContainer"] > .main {
-        background-color: #fafaf8;
+        background-color: #f4f7fa;
         background-image:
-            radial-gradient(circle, #e8e6e1 1px, transparent 1px);
+            radial-gradient(circle, #d7dfe9 1px, transparent 1px);
         background-size: 24px 24px;
     }
 
     /* === 侧边栏 === */
     [data-testid="stSidebar"] {
-        background: #f7f6f3;
-        border-right: 1px solid #edece7;
+        background: #f1f4f8;
+        border-right: 1px solid #dfe4ed;
     }
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h4 {
         font-size: 12px !important;
         font-weight: 600 !important;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: #8b8a91 !important;
+        color: #6e7d91 !important;
         margin-top: 24px;
         margin-bottom: 8px;
     }
@@ -156,20 +158,20 @@ st.markdown("""
         font-size: 13px;
         font-weight: 500;
         transition: all 0.15s;
-        border: 1px solid #e5e3de;
+        border: 1px solid #d2dae4;
         background: white;
-        color: #334155;
+        color: #2a3d52;
     }
     [data-testid="stSidebar"] .stButton > button:hover {
-        border-color: #d4d1c8;
-        background: #fafaf8;
+        border-color: #bcc4d0;
+        background: #f4f7fa;
     }
     [data-testid="stSidebar"] .stButton > button:has-text("删除") {
         color: #dc2626;
-        border-color: #fecaca;
+        border-color: #c5d2f0;
     }
     [data-testid="stSidebar"] .stButton > button:has-text("删除"):hover {
-        background: #fef2f2;
+        background: #edf1fa;
     }
 
     /* === 文档卡片 === */
@@ -179,15 +181,15 @@ st.markdown("""
         border-radius: 10px;
         margin: 4px 0;
         font-size: 13px;
-        color: #334155;
+        color: #2a3d52;
         display: flex;
         align-items: center;
         gap: 8px;
-        border: 1px solid #edece7;
+        border: 1px solid #dfe4ed;
         transition: all 0.2s;
     }
     .doc-card:hover {
-        border-color: #d4d1c8;
+        border-color: #bcc4d0;
         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         transform: translateX(2px);
     }
@@ -199,7 +201,7 @@ st.markdown("""
         border-radius: 12px;
         padding: 14px 12px;
         text-align: center;
-        border: 1px solid #edece7;
+        border: 1px solid #dfe4ed;
         transition: all 0.2s;
         cursor: default;
     }
@@ -211,7 +213,7 @@ st.markdown("""
         font-size: 22px; font-weight: 700; color: #4f46e5; line-height: 1.2;
     }
     .stat-card .stat-label {
-        font-size: 11px; color: #8b8a91; margin-top: 2px;
+        font-size: 11px; color: #6e7d91; margin-top: 2px;
     }
 
     /* === 聊天主区域 === */
@@ -229,14 +231,12 @@ st.markdown("""
     [data-testid="stChatMessage"][data-testid="stChatMessage"] {
         background: white !important;
         box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-        border: 1px solid #f0efe9;
+        border: 1px solid #e2e8f0;
     }
     /* 用户消息：左侧靛蓝色条 */
     [data-testid="stChatMessage"][data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatar"]):not(:has([aria-label="assistant"])) {
         border-left: 3px solid #4f46e5 !important;
     }
-    /* 用户消息靠右，AI消息靠左（通过 container 属性） */
-    /* Streamlit 通过 flex-direction 控制左右，这里用 CSS 增强 */
     .stChatMessage [data-testid="stChatMessageAvatar"] {
         font-size: 20px;
     }
@@ -248,7 +248,7 @@ st.markdown("""
         margin: 40px 0;
         background: white;
         border-radius: 20px;
-        border: 1px solid #edece7;
+        border: 1px solid #dfe4ed;
         box-shadow: 0 1px 3px rgba(0,0,0,0.03), 0 8px 24px rgba(0,0,0,0.04);
     }
     .welcome-card .welcome-icon {
@@ -260,15 +260,15 @@ st.markdown("""
         font-size: 32px;
         box-shadow: 0 0 0 8px rgba(79,70,229,0.04);
     }
-    .welcome-card h3 { font-size: 20px; font-weight: 600; color: #1e1b4b; margin: 0 0 8px 0; }
-    .welcome-card .welcome-desc { font-size: 14px; color: #8b8a91; margin: 0 0 24px 0; line-height: 1.6; }
+    .welcome-card h3 { font-size: 20px; font-weight: 600; color: #1a2540; margin: 0 0 8px 0; }
+    .welcome-card .welcome-desc { font-size: 14px; color: #6e7d91; margin: 0 0 24px 0; line-height: 1.6; }
     .welcome-card .feature-tags {
         display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
     }
     .welcome-card .feature-tag {
-        font-size: 12px; color: #6d6a81;
-        background: #f7f6f3;
-        border: 1px solid #edece7;
+        font-size: 12px; color: #556578;
+        background: #f1f4f8;
+        border: 1px solid #dfe4ed;
         padding: 6px 14px; border-radius: 20px;
         display: inline-flex; align-items: center; gap: 5px;
     }
@@ -276,7 +276,7 @@ st.markdown("""
     /* === 输入框 === */
     [data-testid="stChatInput"] textarea {
         border-radius: 14px !important;
-        border: 2px solid #e5e3de !important;
+        border: 2px solid #d2dae4 !important;
         padding: 12px 16px !important;
         font-size: 14px !important;
         transition: all 0.2s;
@@ -294,7 +294,7 @@ st.markdown("""
     }
     .stExpander summary {
         font-size: 12px !important;
-        color: #8b8a91 !important;
+        color: #6e7d91 !important;
     }
 
     /* === 页脚 === */
@@ -302,25 +302,25 @@ st.markdown("""
         text-align: center;
         padding: 32px 0 16px 0;
         font-size: 12px;
-        color: #c4c1ba;
+        color: #a1acba;
     }
 
     /* === 上传区 === */
     [data-testid="stFileUploader"] {
         border-radius: 12px !important;
-        border: 2px dashed #d4d1c8 !important;
+        border: 2px dashed #bcc4d0 !important;
         background: white !important;
         transition: all 0.2s;
     }
     [data-testid="stFileUploader"]:hover {
         border-color: #4f46e5 !important;
-        background: #f5f3ff !important;
+        background: #ecf2ff !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ====================== 缓存与状态初始化 ======================
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def get_rag_chain():
     from rag_chain import build_rag_chain
     return build_rag_chain()
@@ -337,8 +337,8 @@ with st.sidebar:
     <div style="display:flex;align-items:center;gap:10px;padding:4px 0 20px 0;">
         <div style="width:34px;height:34px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;">⚡</div>
         <div>
-            <div style="font-size:15px;font-weight:600;color:#1e1b4b;line-height:1.2;">知识库问答</div>
-            <div style="font-size:11px;color:#8b8a91;">Powered by DeepSeek</div>
+            <div style="font-size:15px;font-weight:600;color:#1a2540;line-height:1.2;">知识库问答</div>
+            <div style="font-size:11px;color:#6e7d91;">Powered by DeepSeek</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -441,12 +441,14 @@ if user_question := st.chat_input("输入问题，按回车发送..."):
     st.session_state.chat_history.append({"role": "user", "content": user_question})
 
     with st.chat_message("assistant", avatar="🤖"):
+        status_placeholder = st.empty()
+        status_placeholder.caption("🤔 正在分析文档...")
         rag = get_rag_chain()  # 首次加载文档（秒级），后续走缓存
-        with st.spinner("🤔 正在分析文档..."):
-            answer = rag(user_question)
-            st.write(answer)
-            with st.expander("📋 复制答案"):
-                st.code(answer, language=None)
+        answer = rag(user_question)
+        status_placeholder.empty()
+        st.write(answer)
+        with st.expander("📋 复制答案"):
+            st.code(answer, language=None)
         st.session_state.chat_history.append({"role": "assistant", "content": answer})
 
 st.markdown('</div>', unsafe_allow_html=True)
