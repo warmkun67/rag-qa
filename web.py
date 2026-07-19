@@ -31,19 +31,9 @@ if "authenticated" not in st.session_state:
 if not st.session_state.authenticated:
     st.markdown("""
     <style>
-        /* 全屏登录遮罩——覆盖整个页面包括侧边栏 */
-        .login-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 9999;
+        [data-testid="stAppViewContainer"] > .main {
             background: linear-gradient(160deg, #f0ede8 0%, #e3dfd8 50%, #ece8e2 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
         }
-        /* 装饰光斑 */
         .bg-orb {
             position: fixed;
             border-radius: 50%;
@@ -68,12 +58,13 @@ if not st.session_state.authenticated:
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
         }
-        .login-card-full {
-            width: 400px;
+        .login-card {
+            max-width: 400px;
+            margin: 100px auto 0 auto;
             background: rgba(255,255,255,0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            padding: 48px 40px 36px 40px;
+            padding: 48px 40px 20px 40px;
             border-radius: 20px;
             border: 1px solid rgba(255,255,255,0.8);
             box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 16px 40px rgba(0,0,0,0.06);
@@ -81,7 +72,7 @@ if not st.session_state.authenticated:
             position: relative;
             z-index: 1;
         }
-        .login-card-full .icon-wrap {
+        .login-card .icon-wrap {
             display: inline-flex;
             align-items: center; justify-content: center;
             width: 72px; height: 72px;
@@ -90,26 +81,25 @@ if not st.session_state.authenticated:
             margin-bottom: 16px;
             box-shadow: 0 0 0 8px rgba(79,70,229,0.04);
         }
-        .login-card-full .icon-wrap .icon { font-size: 32px; }
-        .login-card-full h2 { font-size: 22px; font-weight: 600; color: #1e1b4b; margin: 0 0 8px 0; }
-        .login-card-full .divider {
+        .login-card .icon-wrap .icon { font-size: 32px; }
+        .login-card h2 { font-size: 22px; font-weight: 600; color: #1e1b4b; margin: 0 0 8px 0; }
+        .login-card .divider {
             width: 32px; height: 3px;
             background: linear-gradient(90deg, #4f46e5, #7c3aed);
             border-radius: 2px;
-            margin: 0 auto 24px auto;
+            margin: 0 auto 0 auto;
             opacity: 0.5;
         }
     </style>
-    <div class="login-overlay">
-        <div class="bg-orb orb-1"></div>
-        <div class="bg-orb orb-2"></div>
-        <div class="bg-orb orb-3"></div>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
     """, unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([0.28, 0.44, 0.28])
     with col2:
         st.markdown("""
-        <div class="login-card-full">
+        <div class="login-card">
             <div class="icon-wrap"><span class="icon">🔐</span></div>
             <h2>知识库问答系统</h2>
             <div class="divider"></div>
@@ -121,8 +111,7 @@ if not st.session_state.authenticated:
                 st.rerun()
             else:
                 st.error("密码错误，请重试")
-        st.markdown('</div>', unsafe_allow_html=True)  <!-- 闭合 login-card-full -->
-    st.markdown('</div>', unsafe_allow_html=True)      <!-- 闭合 login-overlay -->
+        st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
 # ====================== 全局样式 ======================
