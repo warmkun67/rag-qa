@@ -5,7 +5,8 @@ import streamlit as st
 st.set_page_config(
     page_title="RAG 智能问答系统",
     page_icon="🔒",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 import os
@@ -314,7 +315,17 @@ st.markdown("""
         border-color: #4f46e5 !important;
         background: #ecf2ff !important;
     }
+
+    /* 隐藏侧边栏折叠按钮，防止误触后侧边栏消失 */
+    [data-testid="collapsedControl"] { display: none; }
 </style>
+""", unsafe_allow_html=True)
+
+# 清除 Streamlit 侧边栏折叠状态，确保每次展开
+st.markdown("""
+<script>
+localStorage.removeItem('stSidebarState');
+</script>
 """, unsafe_allow_html=True)
 
 # ====================== 缓存与状态初始化 ======================
