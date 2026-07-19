@@ -33,8 +33,6 @@ if not st.session_state.authenticated:
     <style>
         [data-testid="stAppViewContainer"] > .main {
             background: linear-gradient(160deg, #e5ecf4 0%, #d9e2ed 50%, #e0e8f2 100%);
-            position: relative;
-            overflow: hidden;
         }
         .bg-orb {
             position: absolute;
