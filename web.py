@@ -321,12 +321,20 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 清除 Streamlit 侧边栏折叠状态，确保每次展开
-st.markdown("""
+# 阻止 Streamlit 保存侧边栏折叠状态，确保始终展开
+import streamlit.components.v1 as components
+components.html("""
 <script>
-localStorage.removeItem('stSidebarState');
+(function() {
+    localStorage.removeItem('stSidebarState');
+    var setItem = localStorage.setItem;
+    localStorage.setItem = function(key, value) {
+        if (key === 'stSidebarState') return;
+        setItem.apply(localStorage, arguments);
+    };
+})();
 </script>
-""", unsafe_allow_html=True)
+""", height=0)
 
 # ====================== 缓存与状态初始化 ======================
 @st.cache_resource(show_spinner=False)
