@@ -7,6 +7,43 @@ from dotenv import load_dotenv
 load_dotenv()
 import config
 
+# ====================== 密码验证 ======================
+def get_password():
+    """优先从 Streamlit Secrets 读取，否则从环境变量读取"""
+    try:
+        return st.secrets.get("APP_PASSWORD", os.getenv("APP_PASSWORD", ""))
+    except Exception:
+        return os.getenv("APP_PASSWORD", "")
+
+APP_PASSWORD = get_password()
+
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+# set_page_config 必须在最前面调用
+st.set_page_config(
+    page_title="RAG 智能问答系统",
+    page_icon="🔓" if st.session_state.authenticated else "🔒",
+    layout="wide"
+)
+
+if not st.session_state.authenticated:
+    st.markdown("""
+    <div style="max-width:400px; margin:100px auto; text-align:center;">
+        <p style="font-size:48px;">🔐</p>
+        <h2>RAG 智能问答系统</h2>
+        <p style="color:#9aa0a6;">请输入访问密码</p>
+    </div>
+    """, unsafe_allow_html=True)
+    pwd = st.text_input("密码", type="password", placeholder="请输入密码...", label_visibility="collapsed")
+    if st.button("验证", use_container_width=True):
+        if pwd == APP_PASSWORD:
+            st.session_state.authenticated = True
+            st.rerun()
+        else:
+            st.error("❌ 密码错误")
+    st.stop()
+
 # ====================== 自定义 CSS ======================
 st.markdown("""
 <style>
