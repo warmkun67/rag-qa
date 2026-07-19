@@ -1,0 +1,16 @@
+# 环境变量（包含 API Key，绝对不能提交）
+.env
+
+# Python 编译缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# 打包输出
+build/
+dist/
+*.spec
+
+# IDE
+.vscode/
+.idea/
