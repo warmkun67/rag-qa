@@ -144,6 +144,7 @@ st.markdown("""
 
     /* === 侧边栏 === */
     [data-testid="stSidebar"] {
+        display: flex !important;
         background: #f7f6f3;
         border-right: 1px solid #edece7;
     }
