@@ -9,8 +9,14 @@ load_dotenv()
 
 # 大模型配置
 LLM_MODEL = "deepseek-chat"
-LLM_API_KEY = os.getenv("OPENAI_API_KEY")
 LLM_BASE_URL = "https://api.deepseek.com"
+
+# API Key：优先从 Streamlit Secrets 读取（部署环境），否则从环境变量读取（本地）
+try:
+    import streamlit as st
+    LLM_API_KEY = st.secrets.get("OPENAI_API_KEY", os.getenv("OPENAI_API_KEY"))
+except Exception:
+    LLM_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # 文档配置
 DOCS_DIR = "./docs"
