@@ -106,7 +106,7 @@ if not st.session_state.authenticated:
             <div class="divider"></div>
         """, unsafe_allow_html=True)
         pwd = st.text_input("密码", type="password", placeholder="请输入访问密码...", label_visibility="collapsed")
-        if st.button("🔐 验证身份", use_container_width=True):
+        if st.button("🥰 验证身份", use_container_width=True):
             if pwd == APP_PASSWORD:
                 st.session_state.authenticated = True
                 st.rerun()
