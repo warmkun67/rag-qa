@@ -10,10 +10,15 @@ st.set_page_config(
 )
 
 import os
+import uuid
 from dotenv import load_dotenv
 
 load_dotenv()
 import config
+from chat_store import (
+    save_conversation, load_conversation,
+    list_conversations, delete_conversation, format_time,
+)
 
 # ====================== 密码验证 ======================
 def get_password():
@@ -186,6 +191,20 @@ st.markdown("""
         background: #edf1fa;
     }
 
+    /* 历史对话列表项（侧边栏内的小按钮） */
+    [data-testid="stSidebar"] section[data-testid="stSidebar"] .stButton > button {
+        text-align: left !important;
+        padding: 5px 8px !important;
+        font-size: 11px !important;
+        line-height: 1.3 !important;
+        height: auto !important;
+        min-height: 32px !important;
+        border-radius: 6px !important;
+        white-space: normal !important;
+        word-break: break-all !important;
+        transition: all 0.1s;
+    }
+
     /* === 文档卡片 === */
     .doc-card {
         background: white;
@@ -342,6 +361,23 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 if "last_uploaded" not in st.session_state:
     st.session_state.last_uploaded = None
+if "current_conversation_id" not in st.session_state:
+    st.session_state.current_conversation_id = None
+if "conversation_list" not in st.session_state:
+    st.session_state.conversation_list = list_conversations()
+
+
+def auto_save():
+    """将当前 chat_history 持久化到磁盘"""
+    if not st.session_state.chat_history:
+        return
+    current_id = st.session_state.current_conversation_id
+    if current_id is None:
+        current_id = str(uuid.uuid4())
+        st.session_state.current_conversation_id = current_id
+    save_conversation(current_id, st.session_state.chat_history)
+    st.session_state.conversation_list = list_conversations()
+
 
 # ====================== 侧边栏 ======================
 with st.sidebar:
@@ -365,12 +401,56 @@ with st.sidebar:
             <div class="stat-label">📄 文档</div>
         </div>
         <div class="stat-card" style="flex:1;">
-            <div class="stat-num">{len(st.session_state.chat_history) // 2}</div>
-            <div class="stat-label">💬 对话</div>
+            <div class="stat-num">{len(st.session_state.conversation_list)}</div>
+            <div class="stat-label">💬 历史对话</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
+
+    # ===== 历史对话 =====
+    st.markdown("##### 💬 对话历史")
+
+    if st.button("➕ 新建对话", use_container_width=True, key="new_chat_btn"):
+        if st.session_state.chat_history:
+            auto_save()
+        st.session_state.chat_history = []
+        st.session_state.current_conversation_id = None
+        st.session_state.conversation_list = list_conversations()
+        st.rerun()
+
+    convs = st.session_state.conversation_list
+    if convs:
+        for conv in convs:
+            c1, c2 = st.columns([0.82, 0.18])
+            time_str = format_time(conv.get("updated_at", ""))
+            display = f"{time_str}  {conv['title']}"
+            is_active = (conv["id"] == st.session_state.current_conversation_id)
+            with c1:
+                if st.button(
+                    display,
+                    key=f"load_{conv['id']}",
+                    use_container_width=True,
+                    type="primary" if is_active else "secondary",
+                ):
+                    if st.session_state.chat_history and not is_active:
+                        auto_save()
+                    st.session_state.chat_history = load_conversation(conv["id"])
+                    st.session_state.current_conversation_id = conv["id"]
+                    st.session_state.conversation_list = list_conversations()
+                    st.rerun()
+            with c2:
+                if st.button("🗑️", key=f"del_{conv['id']}", help="删除此对话"):
+                    delete_conversation(conv["id"])
+                    if st.session_state.current_conversation_id == conv["id"]:
+                        st.session_state.chat_history = []
+                        st.session_state.current_conversation_id = None
+                    st.session_state.conversation_list = list_conversations()
+                    st.rerun()
+    else:
+        st.caption("暂无历史对话")
+
+    st.markdown("<hr style='margin:16px 0 8px 0;border-color:#dfe4ed;'>", unsafe_allow_html=True)
 
     # 上传
     st.markdown("##### 📤 上传文档")
@@ -415,7 +495,11 @@ with st.sidebar:
             st.rerun()
 
     if st.button("🧹 清空对话历史", use_container_width=True):
+        if st.session_state.current_conversation_id:
+            delete_conversation(st.session_state.current_conversation_id)
         st.session_state.chat_history = []
+        st.session_state.current_conversation_id = None
+        st.session_state.conversation_list = list_conversations()
         st.rerun()
 
 # ====================== 主聊天区 ======================
@@ -463,6 +547,9 @@ if user_question := st.chat_input("输入问题，按回车发送..."):
         with st.expander("📋 复制答案"):
             st.code(answer, language=None)
         st.session_state.chat_history.append({"role": "assistant", "content": answer})
+
+    # 每次问答后自动保存
+    auto_save()
 
 st.markdown('</div>', unsafe_allow_html=True)
 
