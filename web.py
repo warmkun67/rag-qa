@@ -9,6 +9,34 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# === 侧边栏防折叠：拦截 localStorage + 自动恢复 ===
+import streamlit.components.v1 as components
+components.html("""
+<script>
+(function() {
+    // 清除并拦截 Streamlit 侧边栏状态写入 localStorage
+    localStorage.removeItem('stSidebarState');
+    var _setItem = localStorage.setItem;
+    localStorage.setItem = function(key, value) {
+        if (key === 'stSidebarState') return;
+        _setItem.apply(localStorage, arguments);
+    };
+
+    // 自动恢复：监测到侧边栏被折叠后自动点击展开按钮弹回
+    setInterval(function() {
+        var sidebar = document.querySelector('[data-testid="stSidebar"]');
+        if (sidebar && sidebar.offsetWidth < 100) {
+            var toggleBtn = document.querySelector('[data-testid="collapsedControl"]');
+            if (toggleBtn) {
+                localStorage.removeItem('stSidebarState');
+                toggleBtn.click();
+            }
+        }
+    }, 500);
+})();
+</script>
+""", height=0)
+
 import os
 from dotenv import load_dotenv
 
@@ -316,25 +344,8 @@ st.markdown("""
         background: #ecf2ff !important;
     }
 
-    /* 隐藏侧边栏折叠按钮，防止误触后侧边栏消失 */
-    [data-testid="collapsedControl"] { display: none; }
 </style>
 """, unsafe_allow_html=True)
-
-# 阻止 Streamlit 保存侧边栏折叠状态，确保始终展开
-import streamlit.components.v1 as components
-components.html("""
-<script>
-(function() {
-    localStorage.removeItem('stSidebarState');
-    var setItem = localStorage.setItem;
-    localStorage.setItem = function(key, value) {
-        if (key === 'stSidebarState') return;
-        setItem.apply(localStorage, arguments);
-    };
-})();
-</script>
-""", height=0)
 
 # ====================== 缓存与状态初始化 ======================
 @st.cache_resource(show_spinner=False)
