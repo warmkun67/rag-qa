@@ -9,23 +9,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# === 侧边栏防折叠：拦截 localStorage（通过 parent 访问） ===
-import streamlit.components.v1 as components
-components.html("""
-<script>
-(function() {
-    // components.html 在沙盒 iframe 中运行，但同源可共享 localStorage
-    var storage = window.parent.localStorage;
-    storage.removeItem('stSidebarState');
-    var _setItem = storage.setItem;
-    storage.setItem = function(key, value) {
-        if (key === 'stSidebarState') return;
-        _setItem.apply(storage, arguments);
-    };
-})();
-</script>
-""", height=0)
-
 import os
 from dotenv import load_dotenv
 
@@ -108,8 +91,6 @@ if not st.session_state.authenticated:
             margin: 0 auto 0 auto;
             opacity: 0.5;
         }
-        /* 禁用侧边栏折叠按钮 */
-        [data-testid="collapsedControl"] { pointer-events: none !important; }
     </style>
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
@@ -334,9 +315,6 @@ st.markdown("""
         border-color: #4f46e5 !important;
         background: #ecf2ff !important;
     }
-
-    /* 禁用侧边栏折叠按钮（pointer-events 比 display:none 更可靠） */
-    [data-testid="collapsedControl"] { pointer-events: none !important; }
 
 </style>
 """, unsafe_allow_html=True)
