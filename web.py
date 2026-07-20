@@ -139,7 +139,8 @@ st.markdown("""
     [data-testid="stToolbar"] * {
         visibility: hidden !important;
     }
-    [data-testid="stExpandSidebarButton"] {
+    [data-testid="stExpandSidebarButton"],
+    [data-testid="collapsedControl"] {
         visibility: visible !important;
         display: flex !important;
         position: fixed !important;
