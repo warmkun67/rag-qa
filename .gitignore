@@ -11,6 +11,9 @@ build/
 dist/
 *.spec
 
+# 对话历史（本地数据，不提交）
+conversations/
+
 # IDE
 .vscode/
 .idea/
