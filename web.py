@@ -126,9 +126,17 @@ st.markdown("""
     }
     body { color: #2a3d52; }
 
-    /* 隐藏默认顶栏 */
-    [data-testid="stHeader"] { display: none; }
-    /* 保留 stToolbar 可见（内含侧边栏展开按钮），仅透明化背景 */
+    /* 默认顶栏保留可见（内含侧边栏展开按钮），仅透明化 */
+    [data-testid="stHeader"] {
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    /* 顶栏中除工具栏外的元素隐藏 */
+    [data-testid="stHeader"] > *:not([data-testid="stToolbar"]) {
+        display: none !important;
+    }
+    /* 保留 stToolbar 可见，仅透明化背景 */
     [data-testid="stToolbar"] {
         background: transparent !important;
         box-shadow: none !important;
