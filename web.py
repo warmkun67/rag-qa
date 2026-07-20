@@ -128,7 +128,25 @@ st.markdown("""
 
     /* 隐藏默认顶栏 */
     [data-testid="stHeader"] { display: none; }
-    [data-testid="stToolbar"] { display: none; }
+    /* stToolbar 包含展开侧边栏按钮，只保留该按钮可见 */
+    [data-testid="stToolbar"] {
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        height: 0 !important;
+        overflow: visible !important;
+    }
+    [data-testid="stToolbar"] * {
+        visibility: hidden !important;
+    }
+    [data-testid="stExpandSidebarButton"] {
+        visibility: visible !important;
+        display: flex !important;
+        position: fixed !important;
+        top: 12px !important;
+        left: 12px !important;
+        z-index: 999999 !important;
+    }
 
     /* === 主背景 + 纹理 === */
     [data-testid="stAppViewContainer"] > .main {
