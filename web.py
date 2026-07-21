@@ -4,7 +4,7 @@ import streamlit as st
 # === set_page_config 必须是第一条 Streamlit 命令 ===
 st.set_page_config(
     page_title="RAG 智能问答系统",
-    page_icon="🔒",
+    page_icon="static/icon.png",
     layout="wide",
     initial_sidebar_state="expanded"
 )
